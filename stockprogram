@@ -204,6 +204,7 @@ class EndPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+    #************************ Calculator ****************
         label = Label(self,text="Hesap Makinesi",width=20,font=("bold", 15))
         label.pack(side="top", fill="x", pady=10)
         button = tk.Button(self, text='Geri',width=20,bg='brown',fg='white',font=("bold"),
