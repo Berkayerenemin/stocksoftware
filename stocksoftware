@@ -1,0 +1,270 @@
+import tkinter
+from tkinter import *
+import sqlite3
+
+db = sqlite3.connect("data.db")
+c = db.cursor()
+c.execute("CREATE TABLE IF NOT EXISTS user (date INTEGER NOT NULL, username TEXT NOT NULL, event TEXT NOT NULL, cost INTEGER NOT NULL);")
+c.execute("CREATE TABLE IF NOT EXISTS stock (stockname TEXT NOT NULL, stocknumber INTEGER NOT NULL, bus TEXT NOT NULL, tcost INTEGER NOT NULL);")
+db.commit()
+
+from tkinter import Tk, Label, Button
+
+class Software:
+    def __init__(self, master):
+        self.master = master
+        master.title("Stok Programi")
+        master.geometry("800x500")
+
+        self.menubar = Menu(root)
+        self.menubar.add_command(label="Hakkimizda", command=self.hakkimizda)
+        root.config(menu=self.menubar)
+        self.ButtonFrame = Frame(root, width= 250, height=500, bd=2, relief='raise')
+        self.ButtonFrame.pack(side=LEFT)
+        self.SystemFrame = Frame(root, width = 700, height=500, bd=2, relief='raise')
+        self.SystemFrame.pack(side=RIGHT)
+        self.ListBoxFrame = Frame(self.SystemFrame, width=700, height=500, bd=2, relief="raise")
+
+
+        self.TopFrame = Frame(self.SystemFrame, width = 700, height=300,bd=2, relief='raise')
+        self.L1 = Label(self.TopFrame, text="Cari Hareketler", font=("bold",14))
+        self.L1.place(x=255, y=10)
+        self.E1 = Entry(self.TopFrame, font=12)
+        self.E1.place(x=290, y=50) 
+        self.L2 = Label(self.TopFrame, text="Ad Soyad:", font= 12)
+        self.L2.place(x=210, y=50)
+        self.E2 = Entry(self.TopFrame, font=12)
+        self.E2.place(x=290, y=80) 
+        self.L3 = Label(self.TopFrame, text="Tarih:", font=12)
+        self.L3.place(x=243, y=80)
+        self.E3 = Entry(self.TopFrame, font=12)
+        self.E3.place(x=290, y=110) 
+        self.L4 = Label(self.TopFrame, text="Açıklama", font=12)
+        self.L4.place(x=215, y=110)
+
+        self.E4 = Entry(self.TopFrame, font=12)
+        self.E4.place(x=290, y=200) 
+        self.L5 = Label(self.TopFrame, text="Tutar", font=12)
+        self.L5.place(x=243, y=200)
+        self.B1 = Button(self.TopFrame, text='Kaydet',width=15,bg='brown',fg='white',font=("bold"),command=self.save)
+        self.B1.place(x=255, y=240)
+
+        self.BottomFrame = Frame(self.SystemFrame, width = 700, height=200 ,bd=2, relief='raise')
+        self.L6 = Label(self.BottomFrame, text="Cari Hareketler", font=("bold", 14))
+        self.L6.place(x=255, y=10)
+        self.L7 = Label(self.BottomFrame, text="Cari Ad", font=12)
+        self.L7.place(x=210, y=50)
+        self.E5 = Entry(self.BottomFrame, font=12)
+        self.E5.place(x=290, y=50)
+        self.L8 = Label(self.BottomFrame, text="Tarih", font=12)
+        self.L8.place(x=240, y=80)
+        self.E6 = Entry(self.BottomFrame, font=12, width=9)
+        self.E6.place(x=290, y=80)
+        self.E7 = Entry(self.BottomFrame, font=12, width=9)
+        self.E7.place(x=390, y=80)
+        self.L9 = Label(self.BottomFrame, text="-", font=12)
+        self.L9.place(x=380, y=80)
+        self.B2 = Button(self.BottomFrame, text='Araştır',width=15,bg='brown',fg='white',font=("bold"),command=self.searchcari)
+        self.B2.place(x=255, y=120)
+
+        self.StokUpFrame = Frame(self.SystemFrame, width = 700, height=250, bd=2, relief="raise")
+        self.StokFrame = Frame(self.StokUpFrame, width =325 , height=250 , bd=2, relief='raise')
+        self.StokFrame.pack(side=LEFT)
+        self.L10 = Label(self.StokFrame, text="Ürün Ekleme", font=("bold",14))
+        self.L10.place(x=120, y=10)
+        self.E8 = Entry(self.StokFrame, font=12)
+        self.E8.place(x=130, y=50) 
+        self.L11 = Label(self.StokFrame, text="Ürün Adı", font= 12)
+        self.L11.place(x=30, y=50)
+        self.E10 = Entry(self.StokFrame, font=12)
+        self.E10.place(x=130, y=80)
+        self.L13 = Label(self.StokFrame, text="Adet Sayısı", font=12)
+        self.L13.place(x=30, y=80)
+        self.E11 = Entry(self.StokFrame, font=12)
+        self.E11.place(x=130, y=110)
+        self.L14 = Label(self.StokFrame, text="Şirket", font=12)
+        self.L14.place(x=30, y=110)
+        self.E12 = Entry(self.StokFrame, font=12)
+        self.E12.place(x=130, y=140)
+        self.L15 = Label(self.StokFrame, text="Tutar", font=12)
+        self.L15.place(x=30, y=140)
+        self.B3 = Button(self.StokFrame, text='Ekle',width=15,bg='brown',fg='white',font=("bold"),command=self.stocksave)
+        self.B3.place(x=90, y=180)
+
+        self.StokFrame2 = Frame(self.StokUpFrame, width =325 , height=250 , bd=2, relief='raise')
+        self.StokFrame2.pack(side=RIGHT)
+        self.L16 = Label(self.StokFrame2, text="Son Eklenen Ürünler", font=("bold",14))
+        self.L16.place(x=80, y=10)
+
+        self.StokDelFrame = Frame(self.StokUpFrame, width = 325, height=250 , bd=2, relief='raise')
+        self.StokDelFrame.pack()
+
+        self.StokUpFrame2 = Frame(self.SystemFrame, width = 700, height=250, bd=2, relief="raise")
+        self.StokFrame3 = Frame(self.StokUpFrame2, width =325 , height=250 , bd=2, relief='raise')
+        self.StokFrame3.pack(side=LEFT)
+        self.L10 = Label(self.StokFrame3, text="Ürün Silme", font=("bold",14))
+        self.L10.place(x=120, y=10)
+        self.E8 = Entry(self.StokFrame3, font=12)
+        self.E8.place(x=130, y=50) 
+        self.L11 = Label(self.StokFrame3, text="Ürün Adı", font= 12)
+        self.L11.place(x=30, y=50)
+        self.E10 = Entry(self.StokFrame3, font=12)
+        self.E10.place(x=130, y=80)
+        self.L13 = Label(self.StokFrame3, text="Adet Sayısı", font=12)
+        self.L13.place(x=30, y=80)
+        self.E11 = Entry(self.StokFrame3, font=12)
+        self.E11.place(x=130, y=110) 
+        self.L14 = Label(self.StokFrame3, text="Şirket", font=12)
+        self.L14.place(x=30, y=110)
+        self.E12 = Entry(self.StokFrame3, font=12)
+        self.E12.place(x=130, y=140) 
+        self.L15 = Label(self.StokFrame3, text="Tutar", font=12)
+        self.L15.place(x=30, y=140)
+        self.B3 = Button(self.StokFrame3, text='Ekle',width=15,bg='brown',fg='white',font=("bold"),command=self.save)
+        self.B3.place(x=90, y=180)
+
+        self.StokFrame4 = Frame(self.StokUpFrame2, width =325 , height=250 , bd=2, relief='raise')
+        self.StokFrame4.pack(side=RIGHT)
+        self.L16 = Label(self.StokFrame4, text="Son Silinen Ürünler", font=("bold",14))
+        self.L16.place(x=80, y=10)
+
+        self.SearchFrame= Frame(self.SystemFrame, width=700, height=500, bd=2, relief="raise")
+        self.NeewFrame = Frame(self.SystemFrame, width=700, height=250, bd=2, relief="raise")
+        self.L10 = Label(self.NeewFrame, text="Ürün Ekleme Sayfasi", font=("bold", 14))
+        self.L10.place(x=245, y=30)
+
+        self.button1 = Button(self.ButtonFrame, text='Stok Durumu',width=15,bg='brown',fg='white',font=("bold"), command=self.neew)
+        self.button2 = Button(self.ButtonFrame, text='Ürün Ekle',width=15,bg='brown',fg='white',font=("bold"), command=self.newstok)
+        self.button3 = Button(self.ButtonFrame, text='Ürün Sil',width=15,bg='brown',fg='white',font=("bold"),command=self.delstok)
+        self.button4 = Button(self.ButtonFrame, text='Raporlar',width=15,bg='brown',fg='white',font=("bold"))
+        self.button5 = Button(self.ButtonFrame, text='Kasa',width=15,bg='brown',fg='white',font=("bold"))
+        self.button6 = Button(self.ButtonFrame, text='Cari Hesap',width=15,bg='brown',fg='white',font=("bold"), command=self.carid)
+        self.button7 = Button(self.ButtonFrame, text='Cari Fatura',width=15,bg='brown',fg='white',font=("bold"))
+        self.button8 = Button(self.ButtonFrame, text='Geri',width=15,bg='brown',fg='white',font=("bold"))
+
+        self.button1.pack(side=TOP)
+        self.button2.pack(side=TOP)
+        self.button3.pack(side=TOP)
+        self.button4.pack(side=TOP)
+        self.button5.pack(side=TOP)
+        self.button6.pack(side=TOP)
+        self.button7.pack(side=TOP)
+        self.button8.pack(side=TOP)
+
+        self.page()
+
+    def ande(self, *args):
+        self.LST3 = Listbox(self.TopFrame, width=15, height=3)
+        self.LST3.place(x=290, y=135)
+        self.stock5= "BiBoya 4042"
+        self.LST3.insert(END,self.stock5)
+        sec = self.LST3.bind("<<ListboxSelect>>")
+        self.LST3.pack_forget()
+
+    def page(self, *args):
+        self.LST2 = Listbox(self.TopFrame, width=15, height=3)
+        self.LST2.place(x=290, y=135)
+        for s in ["Boya", "Köpük", "Tavan Boyasi", "Firça"]:
+            self.LST2.insert(END,s)
+
+        def bind(widget, event):
+            def decorator(func):
+                widget.bind(event, func)
+                return func
+            return decorator
+    
+        @bind(self.LST2, "<<ListboxSelect>>")
+        def onselect(evt):
+            w = evt.widget
+            index  = int(w.curselection()[0])
+            value = w.get(index)
+            if value == "Boya":
+                self.ande()
+                self.LST2.pack_forget()
+        
+
+    def hakkimizda(self):
+        print("f")
+
+    def searchcari(self):
+        self.aut = self.E5.get()
+        self.date1 = self.E6.get()
+        self.date2 = self.E7.get()
+        db.commit()
+        self.NeewFrame.pack_forget()
+        self.TopFrame.pack_forget()
+        self.BottomFrame.pack_forget()
+        self.StokUpFrame.pack_forget()
+        self.ListBoxFrame.pack()
+        self.LST1 = Listbox(self.ListBoxFrame, width=103, height=29)
+        self.LST1.place(x=10, y=10)
+
+        read = c.execute("SELECT * FROM user WHERE username='{}'".format(aut))
+        for pgn in read.fetchall():
+            self.LST1.insert(END,pgn)
+            print(pgn)
+
+    def save(self):
+        self.time = self.E2.get()
+        self.new = self.E1.get()
+        self.ackl = self.E3.get()
+        self.tcos = self.E4.get()
+        self.insert1 = "INSERT INTO user(date,username,event,cost) VALUES(?,?,?,?)"
+        c.execute(self.insert1, [(time),(new),(ackl),(tcos)])
+        db.commit()
+        self.E2.delete(0,END)
+        self.E1.delete(0,END)
+        self.E3.delete(0,END)
+        self.E4.delete(0,END)
+
+    def stocksave(self):
+        self.stockn = self.E8.get()
+        self.stocknum = self.E10.get()
+        self.businnes = self.E11.get()
+        self.topcos = self.E12.get()
+        self.insert2 = "INSERT INTO stock(stockname,stocknumber,bus,tcost) VALUES(?,?,?,?)"
+        self.c.execute(insert2, [(stockn),(stocknum),(businnes),(topcos)])
+        db.commit()
+        self.E8.delete(0,END)
+        self.E10.delete(0,END)
+        self.E11.delete(0,END)
+        self.E12.delete(0,END)
+
+    def newstok(self):
+        self.NeewFrame.pack_forget()
+        self.TopFrame.pack_forget()
+        self.BottomFrame.pack_forget()
+        self.ListBoxFrame.pack_forget()
+        self.StokUpFrame2.pack_forget()
+        self.StokUpFrame.pack()
+
+    def delstok(self):
+        self.NeewFrame.pack_forget()
+        self.TopFrame.pack_forget()
+        self.BottomFrame.pack_forget()
+        self.ListBoxFrame.pack_forget()
+        self.StokUpFrame.pack_forget()
+        self.StokUpFrame2.pack()
+
+    def carid(self):
+        self.NeewFrame.pack_forget()
+        self.ListBoxFrame.pack_forget()
+        self.StokUpFrame.pack_forget()
+        self.StokUpFrame2.pack_forget()
+        self.TopFrame.pack()
+        self.BottomFrame.pack()
+
+    def neew(self):
+        self.TopFrame.pack_forget()
+        self.BottomFrame.pack_forget()
+        self.ListBoxFrame.pack_forget()
+        self.StokUpFrame.pack_forget()
+        self.StokUpFrame2.pack_forget()
+        self.NeewFrame.pack()
+
+        
+
+
+root = Tk()
+app = Software(root)
+root.mainloop()
